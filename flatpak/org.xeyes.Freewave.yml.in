@@ -1,0 +1,147 @@
+app-id: org.xeyes.Freewave
+runtime: org.kde.Platform
+runtime-version: '6.10'
+sdk: org.kde.Sdk
+command: freewave
+
+finish-args:
+  - --share=ipc
+  - --socket=wayland
+  - --socket=fallback-x11
+  # GPU. Without /dev/dri the sandbox has no DRM node, so Mesa silently falls back
+  # to llvmpipe and every visualizer frame is rasterized on the CPU.
+  - --device=dri
+  - --share=network   # MPD TCP connection (localhost:6600 default); Subsonic HTTP
+  # Audio out. Required by the Subsonic backend, which decodes locally through
+  # GStreamer -- without this its sink cannot reach the host and playback is silent.
+  # (MPD decodes server-side, which is why this went unnoticed while MPD was the
+  # only backend.) Also covers PipeWire hosts via pipewire-pulse.
+  - --socket=pulseaudio
+  # The visualizer's MPD path taps the PipeWire monitor of the default sink, which
+  # needs native PipeWire access -- --socket=pulseaudio does not grant it. The
+  # Subsonic path taps GStreamer in-pipeline and needs nothing here.
+  - --filesystem=xdg-run/pipewire-0
+  - --own-name=org.mpris.MediaPlayer2.freewave   # MPRIS name is outside the app-id namespace
+  - --talk-name=org.freedesktop.secrets          # QtKeychain credential storage (libsecret backend)
+  # For MPD via Unix socket, additionally pass:
+  #   --filesystem=xdg-run/mpd:ro  (if socket is in $XDG_RUNTIME_DIR/mpd)
+  #   --filesystem=home:ro          (if socket path is elsewhere under $HOME)
+
+modules:
+
+  # ── libmpdclient ──────────────────────────────────────────────────────────
+  - name: libmpdclient
+    buildsystem: meson
+    config-opts:
+      - -Ddocumentation=false
+    cleanup:
+      - /include
+      - /lib/pkgconfig
+    sources:
+      - type: git
+        url: https://github.com/MusicPlayerDaemon/libmpdclient.git
+        tag: v2.22
+
+  # ── fmt + spdlog ──────────────────────────────────────────────────────────
+  # Provisioned as modules at the SAME versions cmake/FetchSpdlog.cmake pins,
+  # because flatpak-builder runs each module with no network -- an in-build
+  # FetchContent git-clone cannot work here. The freewave module below sets
+  # -DFREEWAVE_USE_SYSTEM_DEPS=ON to consume these instead of fetching.
+  # Keep these versions in lockstep with FetchSpdlog.cmake.
+  - name: fmt
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+      - -DFMT_TEST=OFF
+      - -DFMT_DOC=OFF
+    cleanup:
+      - /include
+      - /lib/cmake
+      - /lib/pkgconfig
+    sources:
+      - type: git
+        url: https://github.com/fmtlib/fmt.git
+        tag: 12.1.0
+
+  - name: spdlog
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+      - -DSPDLOG_BUILD_SHARED=OFF
+      - -DSPDLOG_BUILD_EXAMPLE=OFF
+      - -DSPDLOG_BUILD_TESTS=OFF
+      - -DSPDLOG_INSTALL=ON
+      # Must match FetchSpdlog.cmake's fetched build: spdlog compiled against the
+      # bundled fmt while freewave uses the external one is an ODR/ABI mismatch.
+      - -DSPDLOG_FMT_EXTERNAL=ON
+    cleanup:
+      - /include
+      - /lib/cmake
+      - /lib/pkgconfig
+    sources:
+      - type: git
+        url: https://github.com/gabime/spdlog.git
+        tag: v1.17.0
+
+  # ── qtkeychain ────────────────────────────────────────────────────────────
+  # Provides Qt6Keychain (ENABLE_KEYCHAIN). Uses the libsecret backend present
+  # in org.kde.Platform; reaches the host secret store via --talk-name below.
+  - name: qtkeychain
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DBUILD_WITH_QT6=ON
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DBUILD_TEST_APPLICATION=OFF
+    cleanup:
+      - /include
+      - /lib/cmake
+      - /mkspecs
+    sources:
+      - type: git
+        url: https://github.com/frankosterfeld/qtkeychain.git
+        tag: 0.14.3
+
+  # ── kissfft ───────────────────────────────────────────────────────────────
+  # The visualizer's FFT. Auto-enabled here because org.kde.Sdk ships
+  # libpipewire-0.3, so ENABLE_VISUALIZER detects ON. Single-precision (float)
+  # and static; the freewave module below names both to find_package, which
+  # errors rather than falling back if either fails to match.
+  - name: kissfft
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+      - -DKISSFFT_DATATYPE=float
+      - -DKISSFFT_STATIC=ON
+      - -DKISSFFT_TEST=OFF
+      - -DKISSFFT_TOOLS=OFF
+      - -DKISSFFT_OPENMP=OFF
+      - -DKISSFFT_PKGCONFIG=OFF
+    cleanup:
+      - /include
+      - /lib/cmake
+      - /lib/pkgconfig
+    sources:
+      - type: git
+        url: https://github.com/mborgerding/kissfft.git
+        tag: 131.1.0
+
+  # ── freewave ──────────────────────────────────────────────────────────────
+  - name: freewave
+    buildsystem: cmake-ninja
+    builddir: true
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+      # No network in the build sandbox -> consume the fmt/spdlog/kissfft modules
+      # above rather than FetchContent-ing them. Backend flags stay auto-detected.
+      - -DFREEWAVE_USE_SYSTEM_DEPS=ON
+      # kissfft's *installed* config calls cmake_minimum_required(VERSION <3.5),
+      # which CMake 4 (in org.kde.Sdk 6.10) refuses. Only the install-config path
+      # hits this; the FetchContent path uses kissfft's own CMakeLists.
+      - -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+      # The kissfft module above is built static; the system-deps default is
+      # SHARED (for Debian, which ships shared-only). kissfft's config package
+      # errors out rather than falling back, so the linkage has to be named.
+      - -DFREEWAVE_KISSFFT_LINKAGE=STATIC
+    sources:
+      - type: dir
+        path: @CMAKE_SOURCE_DIR@

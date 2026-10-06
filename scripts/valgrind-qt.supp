@@ -1,0 +1,49 @@
+# Valgrind memcheck suppressions for Qt/platform one-time allocations.
+# Same policy as lsan.supp: only process-lifetime library state belongs here,
+# never anything reachable from freewave's own code.
+
+{
+   fontconfig-config-cache
+   Memcheck:Leak
+   ...
+   obj:*/libfontconfig.so*
+}
+{
+   glib-type-system
+   Memcheck:Leak
+   ...
+   fun:g_type_register_static
+}
+{
+   glib-quark-table
+   Memcheck:Leak
+   ...
+   fun:g_quark_from_static_string
+}
+{
+   gstreamer-registry
+   Memcheck:Leak
+   ...
+   fun:gst_init_check
+}
+{
+   dbus-shared-connection
+   Memcheck:Leak
+   ...
+   obj:*/libdbus-1.so*
+}
+{
+   glib-library-constructor
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   fun:g_malloc
+   ...
+   fun:_dl_init
+}
+{
+   duktape-realloc-size-zero
+   Memcheck:ReallocZero
+   fun:realloc
+   obj:*/libduktape.so*
+}

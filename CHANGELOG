@@ -1,0 +1,42 @@
+Version 0.9.3
+~~~~~~~~~~~~~
+Released: 2026-10-06
+
+Bugfixes:
+ - Says "Authentication failed" when a server rejects your username or password, instead of claiming the server is offline or unreachable
+ - Releases the audio device when the queue runs out. Previously, on PipeWire, the last few seconds of the final track could play again by themselves hours later
+ - The progress bar returns to the start when playback stops or the queue runs out, instead of staying where it was (Subsonic servers)
+
+Version 0.9.1
+~~~~~~~~~~~~~
+Released: 2026-09-01
+
+First public beta. Freewave connects to a Music Player Daemon (MPD) server or any Subsonic-compatible server, such as Navidrome, Gonic, Ampache, or LMS.
+
+Features:
+ - Album cover grid with cached, full-resolution artwork
+ - Drag-and-drop queue management
+ - Playlists with full editing and drag-to-reorder
+ - Per-song favorites, stored natively on the server
+ - Adapts to servers with partial Subsonic support, hiding controls they can't back
+ - Real-time audio visualizer
+ - MPRIS media-key and desktop integration
+ - Shuffle, repeat, and single-track modes
+ - Accent-color, drop-shadow, and font customisation
+ - Report a bug straight from Settings, which opens the issue tracker
+ - Says why a credential could not be saved, in the keyring's own words, rather than guessing that no keyring is installed
+ - Says "seeking" while a slow seek is still running, instead of showing a clock that has stopped — seeking deep into a large track on a remote server can take ten seconds or more, and the player no longer looks frozen while it does. Shown on both the bottom bar and the fullscreen Now Playing screen
+ - Pressing play on a track that is already playing no longer restarts it from the beginning
+ - Keeps played tracks on disk (Subsonic servers), so replaying one needs no network and seeking inside it is instant instead of taking ten seconds or more. The next track is fetched while the current one plays, and that fetch stands aside whenever the player is opening a stream or running a seek. Off, or on a different budget, under Settings ~ Storage; 2 GiB by default, oldest dropped first
+ - The favorite heart no longer shifts sideways on a track ten minutes or longer, and sits level with the title instead of floating between it and the artist line, in both the queue and an album's track list
+ - Settings now shows the exact build alongside the version, for pinning down a bug report to a specific commit
+ - No longer shows Navidrome's or Ampache's generic "no cover" stock image as if it were the album's real cover — treated as no art instead, same as an album with nothing at all
+ - New app icon: the FW wave mark, replacing the placeholder waveform-bars icon
+ - The window/taskbar icon now actually shows on Wayland desktops (KWin, GNOME Shell), instead of falling back to a generic default
+ - Scrolling the album grid with a mouse wheel no longer jumps several rows at a time
+ - Optional system tray icon: closing the window can keep freewave running in the tray instead of quitting, and middle-clicking the tray icon plays/pauses. Off by default, under Settings ~ System Tray
+ - Switching to another server no longer leaves the previous server's albums in the grid and its tracks in the queue, where the queue rows overlapped each other and lost their album titles. Both are cleared as the switch begins
+ - Cancelling out of "Connecting to server" now returns to the server that was working, instead of leaving Settings open over a session that has already been closed
+ - Now builds and runs on Ubuntu 24.04 LTS, which ships an older Qt than freewave previously required
+ - A server that refuses the album list is now reported as a failure, rather than appearing as a library that finished loading and happens to be empty
+ - Gives up on an unreachable MPD server after about twenty seconds instead of a full minute

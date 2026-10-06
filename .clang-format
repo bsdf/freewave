@@ -1,0 +1,33 @@
+BasedOnStyle:                       GNU
+SpaceBeforeParens:                  ControlStatements
+AlignAfterOpenBracket:              DontAlign
+BreakConstructorInitializers:       BeforeComma
+PackConstructorInitializers:        Never
+ConstructorInitializerIndentWidth:  2
+Cpp11BracedListStyle:               true
+AlignConsecutiveMacros:             { Enabled: true }
+AllowShortIfStatementsOnASingleLine: WithoutElse
+BreakAfterReturnType:               TopLevelDefinitions
+SpaceAfterTemplateKeyword:          false
+SortIncludes:                       Never
+ColumnLimit:                        0
+
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterCaseLabel:       true
+  AfterClass:           false
+  AfterControlStatement: Always
+  AfterEnum:            false
+  AfterExternBlock:     false
+  AfterFunction:        true
+  AfterNamespace:       false
+  AfterStruct:          false
+  AfterUnion:           false
+  BeforeCatch:          true
+  BeforeElse:           true
+  BeforeLambdaBody:     false
+  BeforeWhile:          true
+  IndentBraces:         true
+  SplitEmptyFunction:   true
+  SplitEmptyRecord:     true
+  SplitEmptyNamespace:  true

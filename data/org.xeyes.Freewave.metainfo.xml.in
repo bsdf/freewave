@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>org.xeyes.Freewave</id>
+  <name>Freewave</name>
+  <summary>Album-focused client for MPD and Subsonic</summary>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <developer id="org.xeyes">
+    <name>xeyes.org</name>
+  </developer>
+  <description>
+    <p>
+      Freewave is an album-focused graphical music player. It presents your
+      library as a grid of album covers and keeps the play queue central to the
+      listening experience. It connects to a Music Player Daemon (MPD) server or
+      to any Subsonic-compatible server (such as Navidrome, Gonic, Ampache, or
+      LMS).
+    </p>
+    <ul>
+      <li>Album cover grid with cached, full-resolution artwork</li>
+      <li>Drag-and-drop queue management</li>
+      <li>Playlists with full editing and drag-to-reorder</li>
+      <li>Per-song favorites, stored natively on the server</li>
+      <li>Real-time audio visualizer</li>
+      <li>MPRIS media-key and desktop integration</li>
+      <li>Shuffle, repeat, and single-track modes</li>
+      <li>Accent-color, drop-shadow, and font customisation</li>
+    </ul>
+  </description>
+  <launchable type="desktop-id">org.xeyes.Freewave.desktop</launchable>
+  <url type="homepage">https://xeyes.org</url>
+  <url type="bugtracker">https://github.com/bsdf/freewave/issues</url>
+  <url type="vcs-browser">https://github.com/bsdf/freewave</url>
+  <provides>
+    <binary>freewave</binary>
+  </provides>
+  <content_rating type="oars-1.1"/>
+  <!-- The filenames are part of the published URLs, so never rename an image,
+       only replace it. -->
+  <screenshots>
+    <screenshot type="default">
+      <caption>The album cover grid, with the play queue alongside</caption>
+      <image type="source" width="1552" height="1012">https://raw.githubusercontent.com/bsdf/freewave/main/data/screenshots/grid.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>An album with its track list</caption>
+      <image type="source" width="1552" height="1012">https://raw.githubusercontent.com/bsdf/freewave/main/data/screenshots/album.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Now Playing, with a backdrop drawn from the cover's colors</caption>
+      <image type="source" width="1552" height="1012">https://raw.githubusercontent.com/bsdf/freewave/main/data/screenshots/nowplaying.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>MPD and Subsonic servers side by side in Settings</caption>
+      <image type="source" width="1552" height="1012">https://raw.githubusercontent.com/bsdf/freewave/main/data/screenshots/servers.png</image>
+    </screenshot>
+  </screenshots>
+  <releases>
+    <release type="stable" version="0.9.3" date="2026-10-06T00:00:00Z">
+      <description>
+        <heading>Bugfixes</heading>
+        <ul>
+          <li>Says "Authentication failed" when a server rejects your username or password,
+          instead of claiming the server is offline or unreachable</li>
+          <li>Releases the audio device when the queue runs out. Previously, on PipeWire, the last few
+          seconds of the final track could play again by themselves hours later</li>
+          <li>The progress bar returns to the start when playback stops or the queue runs out, instead
+          of staying where it was (Subsonic servers)</li>
+        </ul>
+      </description>
+    </release>
+    <release type="stable" version="0.9.1" date="2026-09-01T00:00:00Z">
+      <description>
+        <p>First public beta. Freewave connects to a Music Player Daemon (MPD) server or any Subsonic-compatible
+        server, such as Navidrome, Gonic, Ampache, or LMS.</p>
+        <heading>Features</heading>
+        <ul>
+          <li>Album cover grid with cached, full-resolution artwork</li>
+          <li>Drag-and-drop queue management</li>
+          <li>Playlists with full editing and drag-to-reorder</li>
+          <li>Per-song favorites, stored natively on the server</li>
+          <li>Adapts to servers with partial Subsonic support, hiding controls they can't back</li>
+          <li>Real-time audio visualizer</li>
+          <li>MPRIS media-key and desktop integration</li>
+          <li>Shuffle, repeat, and single-track modes</li>
+          <li>Accent-color, drop-shadow, and font customisation</li>
+          <li>Report a bug straight from Settings, which opens the issue tracker</li>
+          <li>Says why a credential could not be saved, in the keyring's own words, rather than
+          guessing that no keyring is installed</li>
+          <li>Says "seeking" while a slow seek is still running, instead of showing a clock
+          that has stopped — seeking deep into a large track on a remote server can take ten seconds
+          or more, and the player no longer looks frozen while it does. Shown on both the bottom bar
+          and the fullscreen Now Playing screen</li>
+          <li>Pressing play on a track that is already playing no longer restarts it from the beginning</li>
+          <li>Keeps played tracks on disk (Subsonic servers), so replaying one needs no network and seeking
+          inside it is instant instead of taking ten seconds or more. The next track is fetched while
+          the current one plays, and that fetch stands aside whenever the player is opening a stream
+          or running a seek. Off, or on a different budget, under Settings ~ Storage; 2 GiB by default,
+          oldest dropped first</li>
+          <li>The favorite heart no longer shifts sideways on a track ten minutes or longer, and sits
+          level with the title instead of floating between it and the artist line, in both the queue
+          and an album's track list</li>
+          <li>Settings now shows the exact build alongside the version, for pinning down a bug report
+          to a specific commit</li>
+          <li>No longer shows Navidrome's or Ampache's generic "no cover" stock image
+          as if it were the album's real cover — treated as no art instead, same as an album with
+          nothing at all</li>
+          <li>New app icon: the FW wave mark, replacing the placeholder waveform-bars icon</li>
+          <li>The window/taskbar icon now actually shows on Wayland desktops (KWin, GNOME Shell), instead
+          of falling back to a generic default</li>
+          <li>Scrolling the album grid with a mouse wheel no longer jumps several rows at a time</li>
+          <li>Optional system tray icon: closing the window can keep freewave running in the tray instead
+          of quitting, and middle-clicking the tray icon plays/pauses. Off by default, under Settings
+          ~ System Tray</li>
+          <li>Switching to another server no longer leaves the previous server's albums in the grid
+          and its tracks in the queue, where the queue rows overlapped each other and lost their album
+          titles. Both are cleared as the switch begins</li>
+          <li>Cancelling out of "Connecting to server" now returns to the server that was working,
+          instead of leaving Settings open over a session that has already been closed</li>
+          <li>Now builds and runs on Ubuntu 24.04 LTS, which ships an older Qt than freewave previously
+          required</li>
+          <li>A server that refuses the album list is now reported as a failure, rather than appearing
+          as a library that finished loading and happens to be empty</li>
+          <li>Gives up on an unreachable MPD server after about twenty seconds instead of a full minute</li>
+        </ul>
+      </description>
+    </release>
+  </releases>
+</component>

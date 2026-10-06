@@ -1,0 +1,25 @@
+# LeakSanitizer suppressions — one-time allocations in platform libraries that
+# live for the process lifetime and are reported only because the library never
+# tears them down. Keep this list minimal and commented; a leak in freewave's
+# own code must never be suppressed here.
+
+# fontconfig caches its config/font list forever
+leak:libfontconfig
+
+# glib's type system, main-context and quark tables are process-lifetime
+leak:g_type_register
+leak:g_quark
+leak:g_main_context
+
+# GStreamer plugin registry (loaded once by the Subsonic/LMS engine tests)
+leak:gst_init
+leak:gst_registry
+leak:gst_plugin
+
+# libdbus shared connection machinery (MPRIS suites)
+leak:dbus_connection
+leak:_dbus_
+
+# Xkb/xcb keyboard state tables held by the Qt platform plugin
+leak:libxkbcommon
+leak:libxcb

@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Freewave
+GenericName=Music Player
+Comment=Album-focused client for MPD and Subsonic
+Exec=freewave
+Icon=org.xeyes.Freewave
+Terminal=false
+Type=Application
+Categories=Audio;Music;Player;Qt;
+Keywords=music;mpd;subsonic;audio;player;album;
+StartupWMClass=freewave
