@@ -1,0 +1,7 @@
+Version: 5
+
+Source: https://github.com/bsdf/freewave.git
+Matching-Pattern: refs/tags/v@ANY_VERSION@
+Mode: git
+Pgp-Mode: none
+Update-Script: uupdate

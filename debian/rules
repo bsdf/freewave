@@ -1,0 +1,21 @@
+#!/usr/bin/make -f
+
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+# Ubuntu 24.04 defaults to gcc-13, below the C++23 floor, and carries gcc-14
+# beside it in universe. Every other supported suite defaults to 14 or newer,
+# where leaving the compiler to dh also keeps a cross build working.
+GXX_MAJOR := $(shell g++ -dumpversion 2>/dev/null | cut -d. -f1)
+
+ifneq ($(shell dpkg --compare-versions "$(GXX_MAJOR)" ge 14 && echo yes),yes)
+export CC := gcc-14
+export CXX := g++-14
+endif
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	dh_auto_configure -- \
+	  -DFREEWAVE_USE_SYSTEM_DEPS=ON \
+	  -DBUILD_TESTS=OFF

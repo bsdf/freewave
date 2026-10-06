@@ -1,0 +1,47 @@
+Source: freewave
+Section: sound
+Maintainer: BEN ENGLISCH <EMAILBEN145@gmail.com>
+Build-Depends:
+ debhelper-compat (= 13),
+ g++ (>= 4:14) | g++-14,
+ cmake (>= 3.17),
+ pkgconf,
+ qt6-base-dev (>= 6.4),
+ qt6-base-dev-tools,
+ qt6-declarative-dev,
+ qt6-shadertools-dev,
+ qtkeychain-qt6-dev,
+ libmpdclient-dev,
+ libspdlog-dev,
+ libfmt-dev,
+ libkissfft-dev,
+ libgstreamer1.0-dev,
+ libgstreamer-plugins-base1.0-dev,
+ libpipewire-0.3-dev,
+Standards-Version: 4.7.4
+Homepage: https://github.com/bsdf/freewave
+Vcs-Git: https://github.com/bsdf/freewave.git -b debian/latest
+Vcs-Browser: https://github.com/bsdf/freewave/tree/debian/latest
+
+Package: freewave
+Architecture: any
+Depends:
+ ${shlibs:Depends},
+ ${misc:Depends},
+ gstreamer1.0-plugins-base,
+ gstreamer1.0-plugins-good,
+ qt6-svg-plugins | libqt6svg6 (<< 6.5),
+ qml6-module-qtquick,
+ qml6-module-qtqml-models,
+Recommends:
+ gstreamer1.0-pipewire | gstreamer1.0-pulseaudio | gstreamer1.0-alsa,
+ gnome-keyring | keepassxc,
+Description: Album-focused music client for MPD and Subsonic
+ Freewave presents your library as a grid of album covers and keeps the
+ play queue central. It connects to a Music Player Daemon (MPD) server or
+ to any Subsonic-compatible server such as Navidrome, Gonic, Ampache or
+ LMS.
+ .
+ Features include drag-and-drop queue management, server-native playlists
+ and favorites, a real-time audio visualizer, and MPRIS desktop
+ integration.

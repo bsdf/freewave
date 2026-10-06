@@ -1,0 +1,50 @@
+.TH FREEWAVE 1 2026-08-31 freewave "User Commands"
+.SH NAME
+freewave \- album\-focused music client for MPD and Subsonic
+.SH SYNOPSIS
+.B freewave
+.RB [ \-\-version ]
+.SH DESCRIPTION
+.B freewave
+presents a music library as a grid of album covers and keeps the play
+queue central to the interface.
+It connects either to a Music Player Daemon server
+.RB ( mpd (1))
+or to a Subsonic\-compatible server such as Navidrome, Gonic, Ampache
+or LMS.
+.PP
+Servers are configured from within the application; there are no
+command\-line options for choosing or connecting to one.
+Credentials are stored in the desktop keyring when one is available.
+.PP
+Features include drag\-and\-drop queue management, server\-native
+playlists and favorites, a real\-time audio visualizer, and MPRIS
+desktop integration.
+.SH OPTIONS
+.TP
+.B \-\-version
+Print the version, the compiled\-in backends and the enabled features,
+then exit.
+This is resolved before the GUI is initialised, so it does not require a
+display.
+.SH ENVIRONMENT
+.TP
+.B SPDLOG_LEVEL
+Logging verbosity, one of
+.BR trace ", " debug ", " info ", " warn ", " error ", " critical
+or
+.BR off .
+Defaults to
+.BR debug .
+.TP
+.B QT_LOGGING_RULES
+Standard Qt logging category rules.
+Applied after freewave's own defaults, so it can re\-enable categories
+the application silences.
+.SH FILES
+.TP
+.I ~/.config/xeyes.org/freewave.conf
+Settings, including configured server profiles.
+.SH SEE ALSO
+.BR mpd (1),
+.BR mpc (1)
